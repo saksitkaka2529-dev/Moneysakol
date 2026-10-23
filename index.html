@@ -25,8 +25,7 @@
     #dashboard>.grid.two>.card{border-radius:18px;box-shadow:0 12px 30px #263c750a}#dashboard .barrow{grid-template-columns:105px 1fr 105px}#dashboard .track{height:10px}
     .authgate{background:#1019349c;backdrop-filter:blur(7px)}.authbox{position:relative;border:1px solid #ffffff65;border-radius:20px;box-shadow:0 30px 75px #0e19345e;padding:27px}.authbox h1{margin:0 0 7px}.auth-close{position:absolute;right:14px;top:12px;border:0;background:#eef2f9;border-radius:8px;color:#42506e;font-size:21px;line-height:1;width:31px;height:31px}
     @media(max-width:900px){.dashboard-hero{padding:28px}.stacked-row{grid-template-columns:145px minmax(160px,1fr) 120px;gap:8px}.hero-amount{min-width:220px}}
-    #paySummary .tablewrap{max-height:430px;margin-top:12px}#paySummary td:first-child{overflow-wrap:anywhere}
-    @media(max-width:650px){.topinner{align-items:center;flex-direction:row;gap:8px}.brand{font-size:16px;max-width:54%}.brand small{display:none}.topright{gap:6px;flex-wrap:nowrap}.guest #connectBtn{display:none}.hero-eyebrow{max-width:100%;font-size:10px}#dashboard .filters .field{flex:1 1 calc(50% - 8px);min-width:0}.topright .mode,.topright #userBadge{display:none}.topright .btn{padding:7px 9px;font-size:11px;min-height:34px}.dashboard-hero{min-height:auto;display:block;padding:25px 22px;border-radius:20px}.hero-amount{text-align:left;margin-top:28px}.hero-amount strong{font-size:36px}.stacked-panel{padding:18px 15px}.stacked-row{grid-template-columns:1fr 110px;gap:5px 8px}.stacked-unit{grid-column:1/-1}.stacked-track{height:17px}.stacked-total{font-size:11px}.chart-heading{display:block}.chart-tag{display:inline-block;margin-top:8px}#paySummary table{table-layout:fixed;font-size:11px}#paySummary th,#paySummary td{padding:7px 5px;white-space:normal}#paySummary th:nth-child(1){width:56%}#paySummary th:nth-child(2){width:16%}#paySummary th:nth-child(3){width:28%}#paySummary td.num{white-space:nowrap}}
+    @media(max-width:650px){.topinner{align-items:center;flex-direction:row;gap:8px}.brand{font-size:16px;max-width:54%}.brand small{display:none}.topright{gap:6px;flex-wrap:nowrap}.guest #connectBtn{display:none}.hero-eyebrow{max-width:100%;font-size:10px}#dashboard .filters .field{flex:1 1 calc(50% - 8px);min-width:0}.topright .mode,.topright #userBadge{display:none}.topright .btn{padding:7px 9px;font-size:11px;min-height:34px}.dashboard-hero{min-height:auto;display:block;padding:25px 22px;border-radius:20px}.hero-amount{text-align:left;margin-top:28px}.hero-amount strong{font-size:36px}.stacked-panel{padding:18px 15px}.stacked-row{grid-template-columns:1fr 110px;gap:5px 8px}.stacked-unit{grid-column:1/-1}.stacked-track{height:17px}.stacked-total{font-size:11px}.chart-heading{display:block}.chart-tag{display:inline-block;margin-top:8px}}
   </style>
 </head>
 <body class="guest">
@@ -48,7 +47,7 @@
       <div class="spacer"></div><div class="card"><div class="step"><b>2</b><span>กำหนดรอบและจับคู่คอลัมน์</span></div><div class="grid three"><div class="field"><label>ปีงบประมาณ พ.ศ.</label><input id="importYear" type="number" min="2500" max="2700"></div><div class="field"><label>รอบรายงาน พ.ศ.-เดือน</label><input id="importPeriod" placeholder="2569-08"></div><div class="field"><label>แทนที่ชุดข้อมูลเดิม (ถ้ามี)</label><select id="replaceBatch"></select></div></div><p id="formatInfo" class="hint">ระบบจะตรวจรูปแบบไฟล์เมื่อเลือกชีต</p><div id="mappingArea" class="mapping"></div><div class="spacer"></div><button id="validateBtn" class="btn primary">ตรวจสอบข้อมูล</button></div>
       <div class="spacer"></div><div class="card"><div class="step"><b>3</b><span>ตรวจทานและบันทึก</span></div><div id="validationResult" class="muted">ยังไม่ได้ตรวจสอบข้อมูล</div><div class="spacer"></div><div class="progress"><span id="uploadProgress"></span></div><p id="uploadStatus" class="muted small"></p><button id="commitBtn" class="btn teal" disabled>ยืนยันนำเข้า</button></div>
     </section>
-    <section id="payables" class="page"><div class="pagehead"><div><h1>รายการเงินผลงานค้างจ่าย (บาท)</h1><p>ยอดรวม H-sub จากไฟล์นำเข้าที่ใช้งาน แยกรายไฟล์และหมวดเงิน</p></div></div><div class="card"><div class="row"><div class="field" style="max-width:320px"><label>หน่วยบริการ</label><select id="payFacility"></select></div><button id="loadPayablesBtn" class="btn internal-ui">โหลดข้อมูลจากชีต</button><a id="targetLink" class="btn internal-ui" target="_blank" rel="noopener">เปิด Google Sheet</a></div><div class="spacer"></div><div class="field"><label>ไฟล์ Excel ที่มีหัวข้อค้างจ่าย</label><input id="payableFile" type="file" accept=".xlsx,.xls"></div><div id="payMigration" class="warn hidden"></div><div id="paySummary" class="muted"></div><div id="paySourceFunds" class="muted small"></div><div class="row"><button id="autoHsubBtn" class="btn">เติมยอด H-sub 7 หมวดจากไฟล์นำเข้า</button></div><div id="payList" class="paylist"></div><div class="spacer"></div><div class="row"><button id="savePayablesBtn" class="btn teal">บันทึกรายการค้างจ่ายลงชีต</button><span id="payStatus" class="small muted"></span></div></div></section>
+    <section id="payables" class="page"><div class="pagehead"><div><h1>รายการเงินผลงานค้างจ่าย (บาท)</h1><p>ยอดรวม H-sub จากไฟล์นำเข้าที่ใช้งาน แยกตามหมวดเงิน</p></div></div><div class="card"><div class="row"><div class="field" style="max-width:320px"><label>หน่วยบริการ</label><select id="payFacility"></select></div><button id="loadPayablesBtn" class="btn internal-ui">โหลดข้อมูลจากชีต</button><a id="targetLink" class="btn internal-ui" target="_blank" rel="noopener">เปิด Google Sheet</a></div><div class="spacer"></div><div class="field"><label>ไฟล์ Excel ที่มีหัวข้อค้างจ่าย</label><input id="payableFile" type="file" accept=".xlsx,.xls"></div><div id="payMigration" class="warn hidden"></div><div id="paySummary" class="muted"></div><div id="paySourceFunds" class="muted small"></div><div class="row"><button id="autoHsubBtn" class="btn">เติมยอดจากกองทุน H-sub</button></div><div id="payList" class="paylist"></div><div class="spacer"></div><div class="row"><button id="savePayablesBtn" class="btn teal">บันทึกรายการค้างจ่ายลงชีต</button><span id="payStatus" class="small muted"></span></div></div></section>
     <section id="details" class="page"><div class="pagehead"><div><h1>รายละเอียดรายรับ</h1><p>ค้นหาด้วย REP หรือเลขอ้างอิง โดยไม่แสดงข้อมูลผู้ป่วย</p></div><button id="csvBtn" class="btn">ส่งออก CSV ที่กรองอยู่</button></div><div class="card filters"><div class="field"><label>ปีงบประมาณ</label><select id="dYear"></select></div><div class="field"><label>รอบรายงาน</label><select id="dPeriod"></select></div><div class="field"><label>หน่วยบริการ</label><select id="dFacility"></select></div><div class="field"><label>ประเภท</label><select id="dType"></select></div><div class="field wide"><label>ค้นหา</label><input id="dSearch" placeholder="REP, TRAN_ID, รหัสหน่วยบริการ"></div><div class="field"><label>สถานะ</label><select id="dStatus"><option value="">ทั้งหมด</option><option value="ปกติ">ปกติ</option><option value="ไม่สมบูรณ์">ไม่สมบูรณ์</option></select></div></div><div class="card"><div id="detailSummary" class="muted small"></div><div class="spacer"></div><div id="detailsTable" class="tablewrap"></div><div class="pager"><button id="prevPage" class="btn">ก่อนหน้า</button><span id="pageInfo" class="muted"></span><button id="nextPage" class="btn">ถัดไป</button></div></div></section>
     <section id="history" class="page"><div class="pagehead"><div><h1>ประวัตินำเข้า</h1><p>ทุกชุดยังอยู่ในประวัติ แม้ถูกแทนที่หรือยกเลิก</p></div></div><div class="card"><div id="historyTable" class="tablewrap"></div></div></section>
     <section id="master" class="page"><div class="pagehead"><div><h1>ข้อมูลหลัก</h1><p>ทะเบียนหน่วยบริการ 24 แห่งจากชีตปลายทาง</p></div></div><div class="grid two"><div class="card"><h2>หน่วยบริการ <span id="facilityCount" class="badge"></span></h2><div class="grid two"><div class="field"><label>รหัสหน่วยบริการ</label><input id="facilityCode" maxlength="20" placeholder="เช่น 05446"></div><div class="field"><label>ชื่อหน่วยบริการ</label><input id="facilityName" maxlength="120"></div></div><div class="row" style="margin:10px 0 15px"><label><input type="checkbox" id="facilityActive" checked> ใช้งาน</label><button id="saveFacilityBtn" class="btn primary">บันทึกหน่วยบริการ</button></div><div id="facilitiesTable" class="tablewrap"></div></div><div class="card"><h2>ประเภทผลงาน</h2><div class="grid two"><div class="field"><label>รหัส</label><input id="typeCode" maxlength="30"></div><div class="field"><label>ชื่อประเภท</label><input id="typeName" maxlength="120"></div></div><div class="field"><label>ชื่อเรียกอื่น</label><input id="typeAliases" maxlength="300"></div><div class="row" style="margin:10px 0 15px"><label><input type="checkbox" id="typeActive" checked> ใช้งาน</label><button id="saveTypeBtn" class="btn primary">บันทึกประเภท</button></div><div id="typesTable" class="tablewrap"></div></div></div><div class="spacer"></div><div id="accountsCard" class="card hidden"><h2>บัญชีเข้าสู่ระบบ</h2><p class="muted">User และ Password ที่กำหนดเป็นรหัสหน่วยบริการ 5 หลักตรงกันทั้ง 24 แห่ง ใช้รหัสนี้ต่อได้ และเปลี่ยนเองได้เมื่อต้องการ</p><div class="row"><button id="issuePasswordsBtn" class="btn primary">ตั้ง User/Password ตามรหัสทั้ง 24 แห่ง</button><button id="downloadPasswordsBtn" class="btn hidden">ดาวน์โหลดรายชื่อ User/Password</button></div><div class="spacer"></div><div id="accountsTable" class="tablewrap"></div></div></section>
@@ -98,7 +97,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   const LOCAL_HEADINGS=[{"column":"Y","name":"ค่าบริการคัดกรองและประเมินปัจจัยเสี่ยงต่อสุขภาพกาย/สุขภาพจิต"},{"column":"Z","name":"บริการชุดตรวจคัดกรองเอชไอวีด้วยตนเอง"},{"column":"AA","name":"บริการฝากครรภ์"},{"column":"AB","name":"บริการยุติการตั้งครรภ์ที่ไม่ปลอดภัย"},{"column":"AC","name":"บริการแว่นตาเด็ก"},{"column":"AD","name":"บริการคัดกรองมะเร็งปากมดลูก"},{"column":"AE","name":"บริการคัดกรองรอยโรคเสี่ยงมะเร็งและมะเร็งช่องปาก (CA Oral Screening)"},{"column":"AF","name":"บริการตรวจคัดกรองและค้นหาวัณโรคในกลุ่มเสี่ยงสูง"},{"column":"AG","name":"บริการคัดกรองเบาหวานและไขมันในเลือด"},{"column":"AH","name":"บริการตรวจคัดกรองยีนกลายพันธ์โรคมะเร็งเต้านม (BRCA1/BRCA2)"},{"column":"AI","name":"บริการคัดกรองโลหิตจางจากการขาดธาตุเหล็ก"},{"column":"AJ","name":"บริการยาเม็ดเสริมธาตุเหล็กและกรดโฟลิค"},{"column":"AK","name":"บริการเคลือบฟลูออไรด์"},{"column":"AL","name":"บริการป้องกันและควบคุมโรคโลหิตจางธาลัสซีเมียในหญิงตั้งครรภ์"},{"column":"AM","name":"บริการคัดกรองมะเร็งลำไส้ใหญ่และลำไส้ตรง (Fit Test)"},{"column":"AN","name":"บริการคัดกรองไวรัสตับอักเสบบี"},{"column":"AO","name":"บริการคัดกรองไวรัสตับอักเสบซี"},{"column":"AP","name":"บริการคัดกรองมะเร็งเต้านมด้วยเครื่องแมมแกรมและอัลตราซาวด์"},{"column":"AQ","name":"บริการให้วัคซีนป้องกันโรค"},{"column":"AR","name":"บริการคัดกรองธาลัสซีเมียในสามีหรือคู่ของหญิงตั้งครรภ์ที่เป็นชาย"},{"column":"AS","name":"บริการคัดกรองโรคซิฟิลิส"},{"column":"AT","name":"บริการป้องกันและควบคุมกลุ่มอาการดาวน์ในหญิงตั้งครรภ์"},{"column":"AU","name":"บริการตรวจหลังคลอด"},{"column":"AV","name":"บริการทดสอบการตั้งครรภ์"},{"column":"AW","name":"บริการวางแผนครอบครัวและการป้องกันตั้งครรภ์ไม่พึงประสงค์"},{"column":"AX","name":"บริการป้องกันและควบคุมภาวะพร่องฮอร์โมนไทรอยด์ (TSH)"},{"column":"AY","name":"บริการแพทย์แผนไทย"},{"column":"AZ","name":"ยาสมุนไพร"},{"column":"BA","name":"บริการฟื้นฟูสมรรถภาพด้านการแพทย์"},{"column":"BB","name":"Lab นอกหน่วย"},{"column":"BC","name":"Palliative care"},{"column":"BD","name":"Telemedicine"},{"column":"BE","name":"Home ward"},{"column":"BF","name":"OPAE"},{"column":"BG","name":"OP Anywhere"},{"column":"BH","name":"อื่น ๆ (บริการคัดกรองโลหิตจางเด็ก)"},{"column":"BI","name":"อื่น ๆ (บริการยาเสริมธาตุเหล็กเด็ก)"},{"column":"BJ","name":"อื่น ๆ (บริการคัดกรองโลหิตจาง+จ่ายยาเสริมธาตุเหล็ก"}];
   const DEFAULT_TYPES=[['H-SUB','รายงานรายรับ H-sub'],...FUND.map(x=>[x[0],x[2]])].map(x=>({code:x[0],name:x[1],aliases:'',active:true}));
   const HSUB_EXTRA=[['OP','H-sub OP (ผู้ป่วยนอก)'],['HC','H-sub HC (ตามรหัสในรายงาน)'],['HC_DRUG','H-sub HC Drug (ค่ายาตามรหัสในรายงาน)'],['AE','H-sub AE (อุบัติเหตุ/ฉุกเฉิน)'],['AE_DRUG','H-sub AE Drug (ค่ายาหมวด AE)'],['PP','H-sub PP (สร้างเสริมสุขภาพ/ป้องกันโรค)'],['FS','H-sub FS (จ่ายตามรายการบริการ)']];
-  const LEGACY_HSUB_MAP=[['ยาสมุนไพร',['HC','HC_DRUG']],['OP Anywhere',['AE','AE_DRUG']]];
+  const HIDDEN_HSUB=new Set([39,40,41,42]);
+  const HSUB_TARGETS=[['ยาสมุนไพร',['HC','HC_DRUG']],['OP Anywhere',['AE','AE_DRUG']]];
   LOCAL_HEADINGS.push(...HSUB_EXTRA.map((x,i)=>({column:['AO','AP','AQ','AR','AS','AT','AU'][i],name:x[1]})));
   LOCAL_HEADINGS.forEach((heading,i)=>{let n=i+3,s='';while(n){n--;s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26)}heading.column=s});
   const state={facilities:[],types:[],batches:[],records:[],publicRecords:[],publicMeta:null,publicError:'',raw:[],logs:[],accounts:[],credentials:[],payables:null,payablesError:'',hsubAutoSaveKey:'',token:'',user:{email:'',role:'GUEST'},workbook:null,file:null,files:[],buffer:null,prepared:null,detailsPage:0,busy:false};
@@ -445,16 +445,25 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     const ready=headingCount===45;
     const legacy=headingCount===38;
     $('payMigration').classList.toggle('hidden',ready);
-    $('payMigration').textContent=ready?'':(legacy?'ชีตนี้ยังมี 38 รายการเดิม กรุณารัน setup() เพื่อเพิ่ม 7 หมวด H-sub ก่อนเติมหรือบันทึกยอด':'โครงสร้างชีตไม่ครบ 45 รายการ กรุณาอัปเดต Code.gs และรัน setup()');
+    $('payMigration').textContent=ready?'':(legacy?'ชีตนี้ยังมี 38 รายการเดิม กรุณารัน setup() เพื่อเพิ่มช่อง H-sub ก่อนเติมหรือบันทึกยอด':'โครงสร้างชีตไม่ครบ กรุณาอัปเดต Code.gs และรัน setup()');
     $('autoHsubBtn').disabled=!ready;
     $('savePayablesBtn').disabled=!ready;
     $('targetLink').href=state.payables.spreadsheetUrl||'#';
     $('targetLink').classList.toggle('hidden',!CLOUD);
     $('loadPayablesBtn').classList.toggle('hidden',!CLOUD);
-    const items=state.payables.headings.map((h,i)=>`<div class="payrow"><b>${esc(h.column)}</b><label for="pay_${i}">${esc(h.name)}</label><input id="pay_${i}" type="number" step="0.01" inputmode="decimal" value="${row.values[i]??0}" aria-label="${esc(h.name)}"></div>`);
-    $('payList').innerHTML=ready?'<div class="paygroup">หมวด H-sub 7 รายการ</div>'+items.slice(38).join('')+'<div class="paygroup old">รายการเดิม 38 รายการ</div>'+items.slice(0,38).join(''):items.join('');
+    const displayed=normalizedPayableValues(row.values);
+    const items=state.payables.headings.map((h,i)=>HIDDEN_HSUB.has(i)?`<input id="pay_${i}" type="hidden" value="0">`:`<div class="payrow"><b>${esc(h.column)}</b><label for="pay_${i}">${esc(h.name)}${i===27?'<br><span class="muted small">HC + HC Drug</span>':i===34?'<br><span class="muted small">AE + AE Drug</span>':''}</label><input id="pay_${i}" type="number" step="0.01" inputmode="decimal" value="${displayed[i]??0}" aria-label="${esc(h.name)}"></div>`);
+    const otherOld=items.slice(0,38).filter((_,i)=>i!==27&&i!==34);
+    $('payList').innerHTML=ready?'<div class="paygroup">หมวด H-sub 3 รายการ</div>'+[items[38],items[43],items[44]].join('')+'<div class="paygroup old">รายการเดิม 38 รายการ</div>'+[items[27],items[34],...otherOld].join('')+items.slice(39,43).join(''):items.join('');
     updatePaySummary();
     if(ready)fillHsubFunds(true);
+  }
+  function normalizedPayableValues(values){
+    const result=Array.from({length:45},(_,i)=>Number(values?.[i])||0);
+    result[27]=Math.round((result[27]+result[39]+result[40])*100)/100;
+    result[34]=Math.round((result[34]+result[41]+result[42])*100)/100;
+    HIDDEN_HSUB.forEach(i=>{result[i]=0});
+    return result;
   }
   function accruedCents(records){return records.reduce((sum,row)=>sum+Math.round((Number(row.accruedAmount)||0)*100),0)}
   function updatePaySummary(){
@@ -464,47 +473,37 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     const records=activeRecords().filter(row=>row.facilityCode===code);
     const imported=accruedCents(records)/100;
     const diff=Math.round((total-imported)*100)/100;
-    const batches=new Map(state.batches.filter(batch=>batch.status==='ACTIVE').map(batch=>[batch.batchId,batch]));
-    const byFile=new Map();
-    records.forEach(row=>{
-      const key=row.batchId;
-      const item=byFile.get(key)||{batchId:key,fileName:batches.get(key)?.fileName||key,count:0,cents:0};
-      item.count++;item.cents+=Math.round((Number(row.accruedAmount)||0)*100);
-      byFile.set(key,item);
-    });
-    const fileRows=[...byFile.values()].sort((a,b)=>a.fileName.localeCompare(b.fileName,'th')||a.batchId.localeCompare(b.batchId)).map(item=>`<tr><td title="${esc(item.fileName)}">${esc(item.fileName)}</td><td class="num">${intfmt.format(item.count)}</td><td class="num">${money(item.cents/100)}</td></tr>`);
-    $('paySummary').innerHTML=`<div class="grid three"><div class="hint">รวม ${state.payables.headings.length} หัวข้อ<br><b>${money(total)} บาท</b></div><div class="hint">ยอดพึงรับจากไฟล์นำเข้าที่ใช้งาน<br><b>${money(imported)} บาท</b></div><div class="${Math.abs(diff)>0.01?'warn':'good'}">ส่วนต่าง<br><b>${money(diff)} บาท</b></div></div><div class="tablewrap"><table><thead><tr><th>ไฟล์นำเข้า</th><th class="num">รายการ</th><th class="num">ยอดพึงรับ (บาท)</th></tr></thead><tbody>${fileRows.join('')||'<tr><td colspan="3">ยังไม่มีรายการนำเข้า</td></tr>'}</tbody><tfoot><tr><th>รวม ${intfmt.format(byFile.size)} ไฟล์</th><th class="num">${intfmt.format(records.length)}</th><th class="num">${money(imported)}</th></tr></tfoot></table></div>`;
+    $('paySummary').innerHTML=`<div class="grid three"><div class="hint">รวม ${state.payables.headings.length-HIDDEN_HSUB.size} หัวข้อ<br><b>${money(total)} บาท</b></div><div class="hint">ยอดพึงรับจากไฟล์นำเข้าที่ใช้งาน<br><b>${money(imported)} บาท</b></div><div class="${Math.abs(diff)>0.01?'warn':'good'}">ส่วนต่าง<br><b>${money(diff)} บาท</b></div></div>`;
     const fundKeys=[...FUND.map(f=>[f[0],f[2]]),['OTHER','อื่น ๆ / ไม่ระบุ']];
     const funds=fundKeys.map(([key,name])=>({name,sum:Math.round(records.reduce((sum,row)=>sum+(Number(compensationParts(row)[key])||0),0)*100)/100}));
     const sourceTotal=Math.round(funds.reduce((sum,item)=>sum+item.sum,0)*100)/100;
-    $('paySourceFunds').innerHTML=`<div class="hint"><b>สรุปยอดตามกองทุน H-sub</b> · ${records.length?'ข้อมูลจาก '+intfmt.format(records.length)+' รายการ':'ยังไม่มีข้อมูลของหน่วยบริการนี้ในเครื่อง'}<br>รวมกองทุนที่จำแนกได้ <b>${money(sourceTotal)} บาท</b></div><div class="tablewrap"><table><thead><tr><th>กองทุน</th><th class="num">ยอดเงิน</th><th>สถานะ</th></tr></thead><tbody>${funds.map(item=>`<tr><td>${esc(item.name)}</td><td class="num">${money(item.sum)}</td><td>${item.sum?'มีข้อมูล':'ยังไม่มีข้อมูล'}</td></tr>`).join('')}</tbody></table></div>`;
+    $('paySourceFunds').innerHTML=`<div class="hint"><b>กองทุนต้นทาง H-sub</b> · ${records.length?'ข้อมูลจาก '+intfmt.format(records.length)+' รายการ':'ยังไม่มีข้อมูลของหน่วยบริการนี้ในเครื่อง'}<br>รวมกองทุนที่จำแนกได้ <b>${money(sourceTotal)} บาท</b></div><div class="tablewrap"><table><thead><tr><th>รหัสกองทุนต้นทาง</th><th class="num">ยอดเงิน</th><th>สถานะ</th></tr></thead><tbody>${funds.map(item=>`<tr><td>${esc(item.name)}</td><td class="num">${money(item.sum)}</td><td>${item.sum?'มีข้อมูล':'ยังไม่มีข้อมูล'}</td></tr>`).join('')}</tbody></table></div>`;
   }
   function fillHsubFunds(silent=false){
     try{
-      if(state.payables?.headings.length!==45)throw new Error('ต้องมีช่อง H-sub ครบ 7 หมวดก่อนเติมยอด');
+      if(state.payables?.headings.length!==45)throw new Error('โครงสร้างชีตไม่ครบ กรุณาอัปเดต Code.gs ก่อนเติมยอด');
       const code=$('payFacility').value;
       const records=activeRecords().filter(row=>row.facilityCode===code);
       if(!records.length){updatePaySummary();$('payStatus').textContent='ยังไม่มีรายการนำเข้าของหน่วยบริการนี้';return {ready:false,imported:0}}
-      const sums=HSUB_EXTRA.map(([key])=>records.reduce((sum,row)=>sum+Math.round((Number(compensationParts(row)[key])||0)*100),0));
+      const sums=Object.fromEntries(HSUB_EXTRA.map(([key])=>[key,records.reduce((sum,row)=>sum+Math.round((Number(compensationParts(row)[key])||0)*100),0)]));
       const imported=accruedCents(records);
-      const legacyRecords=records.filter(row=>Number(row.fiscalYear)===2569);
-      const legacy=LEGACY_HSUB_MAP.map(([label,keys])=>({
-        index:state.payables.headings.findIndex(heading=>String(heading.name).trim()===label),
-        cents:keys.reduce((sum,key)=>sum+legacyRecords.reduce((part,row)=>part+Math.round((Number(compensationParts(row)[key])||0)*100),0),0)
-      }));
-      const legacyIndices=new Set(legacy.map(item=>item.index));
-      const otherOldZero=state.payables.headings.slice(0,38).every((_,i)=>legacyIndices.has(i)||Math.round(number($('pay_'+i).value)*100)===0);
-      const dedicatedOldZero=['HC','HC_DRUG','AE','AE_DRUG'].every(key=>Math.round(number($('pay_'+(38+HSUB_EXTRA.findIndex(item=>item[0]===key))).value)*100)===0);
-      const migrate=legacy.some(item=>item.cents!==0)&&legacy.every(item=>item.index>=0&&Math.round(number($('pay_'+item.index).value)*100)===item.cents)&&otherOldZero&&dedicatedOldZero;
-      if(migrate)legacy.forEach(item=>{$('pay_'+item.index).value='0'});
-      sums.forEach((cents,i)=>{$('pay_'+(38+i)).value=String(cents/100)});
+      for(const [label,keys] of HSUB_TARGETS){
+        const index=state.payables.headings.findIndex(heading=>String(heading.name).trim()===label);
+        if(index<0)throw new Error('ไม่พบช่อง '+label+' ในรายการค้างจ่าย');
+        $('pay_'+index).value=String(keys.reduce((sum,key)=>sum+sums[key],0)/100);
+      }
+      HIDDEN_HSUB.forEach(i=>{$('pay_'+i).value='0'});
+      for(const key of ['OP','PP','FS']){
+        const index=38+HSUB_EXTRA.findIndex(item=>item[0]===key);
+        $('pay_'+index).value=String(sums[key]/100);
+      }
       updatePaySummary();
-      const categorized=sums.reduce((sum,cents)=>sum+cents,0);
+      const categorized=Object.values(sums).reduce((sum,cents)=>sum+cents,0);
       const target=state.payables.headings.reduce((sum,_,i)=>sum+Math.round(number($('pay_'+i).value)*100),0);
       const warning=categorized!==imported?'ยอดจาก 7 หมวดต่างจากยอดพึงรับ '+money((imported-categorized)/100)+' บาท กรุณาตรวจหมวดเงิน':(target!==imported?'ช่องรายการอื่นยังมียอด ทำให้รวมต่างจากไฟล์นำเข้า '+money((target-imported)/100)+' บาท กรุณาตรวจสอบ':'');
-      $('payStatus').textContent='เตรียมยอด H-sub จากไฟล์ที่ใช้งาน '+money(imported/100)+' บาท'+(migrate?' · เตรียมย้ายยอดที่เคยอยู่ผิดช่อง':'')+(warning?' · '+warning:' · ยังไม่บันทึกลงชีต');
-      if(!silent)notify(warning||'เติมยอด H-sub 7 หมวดครบแล้ว กรุณาตรวจและกดบันทึก',warning?'error':'good');
-      return {ready:categorized===imported&&target===imported,values:sums,imported,total:categorized,warning,migrated:migrate};
+      $('payStatus').textContent='เตรียมยอด H-sub จากไฟล์ที่ใช้งาน '+money(imported/100)+' บาท'+(warning?' · '+warning:' · ยังไม่บันทึกลงชีต');
+      if(!silent)notify(warning||'เติมยอดลงรายการเดิมและ H-sub ครบแล้ว กรุณาตรวจและกดบันทึก',warning?'error':'good');
+      return {ready:categorized===imported&&target===imported,values:sums,imported,total:categorized,warning};
     }catch(e){if(!silent)notify(e.message,'error');return {ready:false,error:e.message}}
   }
   async function importPayableFile(){
@@ -532,24 +531,25 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       if(!record)throw new Error('ไม่พบรหัสหน่วยบริการ '+code+' ในไฟล์');
       const values=found.columns.map((c,i)=>number(c<0?$('pay_'+i).value||0:record[c]||0));
       if(values.some(v=>!Number.isFinite(v)))throw new Error('ยอดเงินค้างจ่ายในไฟล์ไม่ถูกต้อง');
-      values.forEach((v,i)=>$('pay_'+i).value=v||'');
+      normalizedPayableValues(values).forEach((v,i)=>$('pay_'+i).value=v||'');
       updatePaySummary();
       $('payStatus').textContent='อ่าน '+file.name+' / '+found.sheet+' แล้ว กรุณาตรวจยอดและกดบันทึก';
-      notify('อ่านยอดจากไฟล์แล้ว '+(found.columns.slice(38).every(c=>c>=0)?'ครบ 45 ช่อง':'38 ช่องเดิม โดยคงยอด 7 ช่อง H-sub ที่แสดงอยู่')+' กรุณาตรวจสอบก่อนบันทึก','good')
+      notify('อ่านยอดจากไฟล์แล้ว และรวม HC/AE ลงช่องเดิม กรุณาตรวจสอบก่อนบันทึก','good')
     }catch(e){notify(e.message,'error')}
   }
   async function savePayables(options={}){
     const silent=!!options.silent;
     try{
-      if(state.payables?.headings.length!==45)throw new Error('ต้องมีรายการค้างจ่ายครบ 45 ช่องก่อนบันทึก');
+      if(state.payables?.headings.length!==45)throw new Error('โครงสร้างชีตไม่ครบ กรุณาอัปเดต Code.gs ก่อนบันทึก');
       const row=state.payables.rows.find(r=>r.code===$('payFacility').value);if(!row)throw new Error('เลือกหน่วยบริการก่อน');
       const values=state.payables.headings.map((_,i)=>number($('pay_'+i).value||0));
       if(values.some(v=>!Number.isFinite(v)))throw new Error('ยอดเงินต้องเป็นตัวเลข');
+      if([...HIDDEN_HSUB].some(i=>Math.round(values[i]*100)!==0))throw new Error('ช่อง H-sub HC/AE ที่เลิกใช้ต้องเป็นศูนย์ กรุณาเติมยอดจากกองทุนใหม่');
       const total=Math.round(values.reduce((s,v)=>s+v,0)*100)/100;
       const imported=accruedCents(activeRecords().filter(r=>r.facilityCode===row.code))/100;
-      if(imported>0&&total+0.01<imported)throw new Error('ยอดรวม '+state.payables.headings.length+' ช่องต่ำกว่ายอดพึงรับจากไฟล์นำเข้าที่ใช้งานทั้งหมด '+money(imported)+' บาท จึงยังบันทึกไม่ได้');
+      if(imported>0&&total+0.01<imported)throw new Error('ยอดรวม 41 ช่องต่ำกว่ายอดพึงรับจากไฟล์นำเข้าที่ใช้งานทั้งหมด '+money(imported)+' บาท จึงยังบันทึกไม่ได้');
       const run=async()=>{try{$('savePayablesBtn').disabled=true;if(CLOUD){await gas('saveTargetPayables',row.code,values,row.version);state.payables=await gas('getTargetPayables')}else{row.values=values;persist()}$('payStatus').textContent='บันทึกสำเร็จ '+money(total)+' บาท';if(!silent)notify('บันทึกรายการค้างจ่ายแล้ว','good')}catch(e){if(!silent)notify(e.message,'error');throw e}finally{$('savePayablesBtn').disabled=false}};
-      if(!silent&&Math.abs(total-imported)>0.01)confirmAction('ยืนยันยอดต่างจากรายงานนำเข้า','ยอด '+state.payables.headings.length+' หัวข้อ '+money(total)+' บาท ต่างจากยอดพึงรับที่นำเข้า '+money(imported)+' บาท กรุณาตรวจสอบความหมายของยอดก่อนบันทึก',run);else await run();
+      if(!silent&&Math.abs(total-imported)>0.01)confirmAction('ยืนยันยอดต่างจากรายงานนำเข้า','ยอด 41 หัวข้อ '+money(total)+' บาท ต่างจากยอดพึงรับที่นำเข้า '+money(imported)+' บาท กรุณาตรวจสอบความหมายของยอดก่อนบันทึก',run);else await run();
     }catch(e){if(!silent){notify(e.message,'error');return false}throw e}
   }
   async function issuePasswords(){try{$('issuePasswordsBtn').disabled=true;const result=await gas('issueFacilityPasswords');state.credentials=result.created;state.accounts=await gas('getAccounts');renderMaster();$('downloadPasswordsBtn').classList.remove('hidden');notify('ตั้ง User/Password ตามรหัสสถานบริการครบ '+result.created.length+' แห่งแล้ว','good')}catch(e){notify(e.message,'error')}finally{$('issuePasswordsBtn').disabled=false}}

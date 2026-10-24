@@ -86,8 +86,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   const INSIDE_GAS=typeof google!=='undefined' && google.script && google.script.run;
   const BACKEND_KEY='HS_WEBAPP_URL';
   const DATA_CACHE_KEY='HS_DATA_CACHE_V1';
-  let BACKEND_URL='';
-  try{BACKEND_URL=localStorage.getItem(BACKEND_KEY)||''}catch(_){/* Browser may block storage. */}
+  const DEFAULT_BACKEND_URL='https://script.google.com/macros/s/AKfycbyqKwLg6zAy2WZDnIijAoLmF2Kum_VYLIyp_gVzIU0f2RT0mSLGrSCRUS8F7N4nSyLPVg/exec';
+  let BACKEND_URL=DEFAULT_BACKEND_URL;
+  try{const saved=localStorage.getItem(BACKEND_KEY);if(saved!==null)BACKEND_URL=saved}catch(_){/* Browser may block storage. */}
   const CLOUD=!!(INSIDE_GAS||BACKEND_URL);
   const STORE='hsub_dashboard_v1';
   const EXPECTED_SHEET_ID='1QcKf3uGqAe1kffAH4J1nc4vEpXlEcxDFZv3xa3r1dl8';

@@ -15,7 +15,8 @@
     body{background:radial-gradient(circle at 90% 0%,#e8e8ff 0,transparent 32%),radial-gradient(circle at 5% 32%,#e3f8f6 0,transparent 30%),var(--bg)}
     .top{background:#111932;box-shadow:0 8px 30px #1824471a}.topinner{min-height:86px}.brand{font-size:21px;line-height:1.25}.brand small{margin-top:5px;color:#aebfe1}.topright{justify-content:flex-end}.topright .mode{background:#253253;color:#cbd8f6;border:1px solid #455375}.topright .btn.ghost{border-color:#53617f}.topright .btn.ghost:hover{background:#ffffff16}
     .login-trigger{background:linear-gradient(115deg,#66e3d0,#84b7ff)!important;color:#102343!important;border:0!important;box-shadow:0 8px 24px #64bed74d;padding:10px 20px!important;border-radius:11px!important}
-    .guest .nav button:not([data-page="dashboard"]){display:none}.nav{box-shadow:0 5px 18px #1824470a}.nav button.active{color:#395de7;border-color:#42c8bd}
+    .guest .nav button:not([data-page="dashboard"]),.data-pending .nav button:not([data-page="dashboard"]){display:none}.nav{box-shadow:0 5px 18px #1824470a}.nav button.active{color:#395de7;border-color:#42c8bd}
+    .data-load-status{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0;padding:13px 16px;border-left:4px solid #3868f4;border-radius:6px;background:#eaf2ff;color:#183c70}.data-load-status.error{border-left-color:#b63d3d;background:#fff0f0;color:#8d2929}.data-load-status.hidden{display:none}
     .dashboard-hero{position:relative;overflow:hidden;display:flex;justify-content:space-between;align-items:end;gap:30px;min-height:246px;margin-bottom:20px;padding:36px 40px;border-radius:26px;color:#fff;background:linear-gradient(118deg,#151e42 2%,#253582 51%,#196e85 100%);box-shadow:0 22px 45px #24387930}
     .dashboard-hero:before,.dashboard-hero:after{content:"";position:absolute;border-radius:50%;pointer-events:none}.dashboard-hero:before{width:410px;height:410px;right:-95px;top:-230px;background:radial-gradient(circle,#5af6d642,transparent 68%)}.dashboard-hero:after{width:320px;height:320px;right:22%;bottom:-285px;border:45px solid #ffffff10}
     .hero-copy,.hero-amount{position:relative;z-index:1}.hero-eyebrow{display:inline-flex;gap:8px;align-items:center;padding:6px 12px;border:1px solid #ffffff45;border-radius:99px;background:#ffffff15;color:#c9f7f0;font-size:12px;font-weight:800;letter-spacing:.6px}.hero-eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:#6ff4d7;box-shadow:0 0 0 4px #6ff4d733}.dashboard-hero h1{font-size:clamp(29px,3.3vw,47px);margin:18px 0 9px;letter-spacing:-.6px;line-height:1.2}.dashboard-hero p{color:#cbd9f5;margin:0;max-width:600px;font-size:14px}.hero-amount{text-align:right;min-width:270px}.hero-amount span{display:block;color:#cbd9f5;font-size:12px;font-weight:700}.hero-amount strong{display:block;font-size:clamp(30px,3.8vw,52px);line-height:1.18;letter-spacing:-1.4px;white-space:nowrap;margin:8px 0}.hero-amount small{color:#91f2df;font-weight:700}
@@ -33,6 +34,7 @@
   <nav class="nav"><div class="shell navinner"><button data-page="dashboard" class="active">ภาพรวม</button><button data-page="import">นำเข้า Excel</button><button data-page="payables">เงินผลงานค้างจ่าย</button><button data-page="details">รายละเอียด</button><button data-page="history">ประวัตินำเข้า</button><button data-page="master">ข้อมูลหลัก</button></div></nav>
   <main class="shell">
     <div id="globalNotice" class="notice"></div>
+    <div id="dataLoadStatus" class="data-load-status hidden" role="status" aria-live="polite"><span id="dataLoadMessage"></span><button id="retryDataBtn" class="btn hidden" type="button">ลองใหม่</button></div>
     <section id="dashboard" class="page active">
       <div class="dashboard-hero"><div class="hero-copy"><span class="hero-eyebrow">รายได้พึงรับอำเภอเมืองสกลนคร</span><h1>รายได้พึงรับอำเภอเมืองสกลนคร</h1><p>ติดตามยอดที่พึงได้รับชดเชย แยกประเภทเงินในแท่งเดียวกันของแต่ละหน่วยบริการ</p></div><div class="hero-amount"><span>ยอดพึงรับตามตัวกรอง</span><strong id="heroTotal">0.00 ฿</strong><small id="updatedLabel">กำลังโหลดข้อมูล</small></div></div>
       <div class="card filters"><div class="field"><label>ปีงบประมาณ</label><select id="fYear"></select></div><div class="field"><label>รอบรายงาน</label><select id="fPeriod"></select></div><div class="field"><label>หน่วยบริการ</label><select id="fFacility"></select></div><div class="field"><label>ประเภทผลงาน / หมวดเงิน</label><select id="fType"></select></div></div>
@@ -47,7 +49,7 @@
       <div class="spacer"></div><div class="card"><div class="step"><b>2</b><span>กำหนดรอบและจับคู่คอลัมน์</span></div><div class="grid three"><div class="field"><label>ปีงบประมาณ พ.ศ.</label><input id="importYear" type="number" min="2500" max="2700"></div><div class="field"><label>รอบรายงาน พ.ศ.-เดือน</label><input id="importPeriod" placeholder="2569-08"></div><div class="field"><label>แทนที่ชุดข้อมูลเดิม (ถ้ามี)</label><select id="replaceBatch"></select></div></div><p id="formatInfo" class="hint">ระบบจะตรวจรูปแบบไฟล์เมื่อเลือกชีต</p><div id="mappingArea" class="mapping"></div><div class="spacer"></div><button id="validateBtn" class="btn primary">ตรวจสอบข้อมูล</button></div>
       <div class="spacer"></div><div class="card"><div class="step"><b>3</b><span>ตรวจทานและบันทึก</span></div><div id="validationResult" class="muted">ยังไม่ได้ตรวจสอบข้อมูล</div><div class="spacer"></div><div class="progress"><span id="uploadProgress"></span></div><p id="uploadStatus" class="muted small"></p><button id="commitBtn" class="btn teal" disabled>ยืนยันนำเข้า</button></div>
     </section>
-    <section id="payables" class="page"><div class="pagehead"><div><h1>รายการเงินผลงานค้างจ่าย (บาท)</h1><p>ยอดรวม H-sub จากไฟล์นำเข้าที่ใช้งาน แยกตามหมวดเงิน</p></div></div><div class="card"><div class="row"><div class="field" style="max-width:320px"><label>หน่วยบริการ</label><select id="payFacility"></select></div><button id="loadPayablesBtn" class="btn internal-ui">โหลดข้อมูลจากชีต</button><a id="targetLink" class="btn internal-ui" target="_blank" rel="noopener">เปิด Google Sheet</a></div><div class="spacer"></div><div class="field"><label>ไฟล์ Excel ที่มีหัวข้อค้างจ่าย</label><input id="payableFile" type="file" accept=".xlsx,.xls"></div><div id="payMigration" class="warn hidden"></div><div id="paySummary" class="muted"></div><div id="paySourceFunds" class="muted small"></div><div class="row"><button id="autoHsubBtn" class="btn">เติมยอดจากกองทุน H-sub</button></div><div id="payList" class="paylist"></div><div class="spacer"></div><div class="row"><button id="savePayablesBtn" class="btn teal">บันทึกรายการค้างจ่ายลงชีต</button><span id="payStatus" class="small muted"></span></div></div></section>
+    <section id="payables" class="page"><div class="pagehead"><div><h1>รายการเงินผลงานค้างจ่าย (บาท)</h1><p>ยอดรวม H-sub จากไฟล์นำเข้าที่ใช้งาน แยกตามหมวดเงิน</p></div></div><div class="card"><div class="row"><div class="field" style="max-width:320px"><label>หน่วยบริการ</label><select id="payFacility"></select></div><button id="loadPayablesBtn" class="btn internal-ui">โหลดข้อมูลจากชีต</button><a id="targetLink" class="btn internal-ui" target="_blank" rel="noopener">เปิด Google Sheet</a></div><div class="spacer"></div><div class="field"><label>ไฟล์ Excel ที่มีหัวข้อค้างจ่าย</label><input id="payableFile" type="file" accept=".xlsx,.xls"></div><div id="payMigration" class="warn hidden"></div><div id="paySummary" class="muted"></div><div id="paySourceFunds" class="muted small"></div><div class="row"><button id="autoHsubBtn" class="btn">เติมยอดจากกองทุน H-sub</button></div><div id="payList" class="paylist"></div><div class="spacer"></div><div class="row"><span id="payStatus" class="small muted"></span></div></div></section>
     <section id="details" class="page"><div class="pagehead"><div><h1>รายละเอียดรายรับ</h1><p>ค้นหาด้วย REP หรือเลขอ้างอิง โดยไม่แสดงข้อมูลผู้ป่วย</p></div><button id="csvBtn" class="btn">ส่งออก CSV ที่กรองอยู่</button></div><div class="card filters"><div class="field"><label>ปีงบประมาณ</label><select id="dYear"></select></div><div class="field"><label>รอบรายงาน</label><select id="dPeriod"></select></div><div class="field"><label>หน่วยบริการ</label><select id="dFacility"></select></div><div class="field"><label>ประเภท</label><select id="dType"></select></div><div class="field wide"><label>ค้นหา</label><input id="dSearch" placeholder="REP, TRAN_ID, รหัสหน่วยบริการ"></div><div class="field"><label>สถานะ</label><select id="dStatus"><option value="">ทั้งหมด</option><option value="ปกติ">ปกติ</option><option value="ไม่สมบูรณ์">ไม่สมบูรณ์</option></select></div></div><div class="card"><div id="detailSummary" class="muted small"></div><div class="spacer"></div><div id="detailsTable" class="tablewrap"></div><div class="pager"><button id="prevPage" class="btn">ก่อนหน้า</button><span id="pageInfo" class="muted"></span><button id="nextPage" class="btn">ถัดไป</button></div></div></section>
     <section id="history" class="page"><div class="pagehead"><div><h1>ประวัตินำเข้า</h1><p>ทุกชุดยังอยู่ในประวัติ แม้ถูกแทนที่หรือยกเลิก</p></div></div><div class="card"><div id="historyTable" class="tablewrap"></div></div></section>
     <section id="master" class="page"><div class="pagehead"><div><h1>ข้อมูลหลัก</h1><p>ทะเบียนหน่วยบริการ 24 แห่งจากชีตปลายทาง</p></div></div><div class="grid two"><div class="card"><h2>หน่วยบริการ <span id="facilityCount" class="badge"></span></h2><div class="grid two"><div class="field"><label>รหัสหน่วยบริการ</label><input id="facilityCode" maxlength="20" placeholder="เช่น 05446"></div><div class="field"><label>ชื่อหน่วยบริการ</label><input id="facilityName" maxlength="120"></div></div><div class="row" style="margin:10px 0 15px"><label><input type="checkbox" id="facilityActive" checked> ใช้งาน</label><button id="saveFacilityBtn" class="btn primary">บันทึกหน่วยบริการ</button></div><div id="facilitiesTable" class="tablewrap"></div></div><div class="card"><h2>ประเภทผลงาน</h2><div class="grid two"><div class="field"><label>รหัส</label><input id="typeCode" maxlength="30"></div><div class="field"><label>ชื่อประเภท</label><input id="typeName" maxlength="120"></div></div><div class="field"><label>ชื่อเรียกอื่น</label><input id="typeAliases" maxlength="300"></div><div class="row" style="margin:10px 0 15px"><label><input type="checkbox" id="typeActive" checked> ใช้งาน</label><button id="saveTypeBtn" class="btn primary">บันทึกประเภท</button></div><div id="typesTable" class="tablewrap"></div></div></div><div class="spacer"></div><div id="accountsCard" class="card hidden"><h2>บัญชีเข้าสู่ระบบ</h2><p class="muted">User และ Password ที่กำหนดเป็นรหัสหน่วยบริการ 5 หลักตรงกันทั้ง 24 แห่ง ใช้รหัสนี้ต่อได้ และเปลี่ยนเองได้เมื่อต้องการ</p><div class="row"><button id="issuePasswordsBtn" class="btn primary">ตั้ง User/Password ตามรหัสทั้ง 24 แห่ง</button><button id="downloadPasswordsBtn" class="btn hidden">ดาวน์โหลดรายชื่อ User/Password</button></div><div class="spacer"></div><div id="accountsTable" class="tablewrap"></div></div></section>
@@ -102,7 +104,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   const HSUB_TARGETS=[['ยาสมุนไพร',['HC','HC_DRUG']],['OP Anywhere',['AE','AE_DRUG']]];
   LOCAL_HEADINGS.push(...HSUB_EXTRA.map((x,i)=>({column:['AO','AP','AQ','AR','AS','AT','AU'][i],name:x[1]})));
   LOCAL_HEADINGS.forEach((heading,i)=>{let n=i+3,s='';while(n){n--;s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26)}heading.column=s});
-  const state={facilities:[],types:[],batches:[],records:[],publicRecords:[],publicMeta:null,publicError:'',raw:[],logs:[],accounts:[],credentials:[],payables:null,payablesError:'',hsubAutoSaveKey:'',token:'',user:{email:'',role:'GUEST'},workbook:null,file:null,files:[],buffer:null,prepared:null,detailsPage:0,busy:false};
+  const state={facilities:[],types:[],batches:[],records:[],publicRecords:[],publicMeta:null,publicError:'',raw:[],logs:[],accounts:[],credentials:[],payables:null,payablesError:'',hsubAutoSaveKey:'',token:'',user:{email:'',role:'GUEST'},dataReady:false,loadRun:0,workbook:null,file:null,files:[],buffer:null,prepared:null,detailsPage:0,busy:false};
   const fmt=new Intl.NumberFormat('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
   const intfmt=new Intl.NumberFormat('th-TH',{maximumFractionDigits:0});
   function money(n){return fmt.format(Number(n)||0)}
@@ -111,6 +113,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   function str(v){return v==null?'':String(v).trim()}
   function id(){return (crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2))}
   function notify(message,kind='hint'){const el=$('globalNotice');el.className='notice show '+kind;el.textContent=message;el.scrollIntoView({block:'nearest'});if(kind==='good')setTimeout(()=>el.classList.remove('show'),7000)}
+  function dataLoadStatus(message='',error=false){$('dataLoadMessage').textContent=message;$('dataLoadStatus').classList.toggle('hidden',!message);$('dataLoadStatus').classList.toggle('error',error);$('retryDataBtn').classList.toggle('hidden',!error)}
   function postRpc(name,args){return new Promise((resolve,reject)=>{
     const requestId=id(),frame=document.createElement('iframe'),form=document.createElement('form');
     frame.name='hsrpc_'+requestId.replace(/[^\w]/g,'');frame.style.display='none';
@@ -148,8 +151,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   function rawClean(row){const obj={};row.forEach((v,i)=>{if([3,4,5,6].includes(i)||v==null||v==='')return;obj['c'+i]=v instanceof Date?dateISO(v):typeof v==='object'?String(v):v});return obj}
   function sha256(buffer){return crypto.subtle.digest('SHA-256',buffer).then(x=>Array.from(new Uint8Array(x),b=>b.toString(16).padStart(2,'0')).join(''))}
   function selectOptions(el,options,current){el.innerHTML=options.map(x=>`<option value="${esc(x[0])}">${esc(x[1])}</option>`).join('');if(current!=null && options.some(x=>String(x[0])===String(current)))el.value=current}
-  function setPage(page){if(!state.token&&page!=='dashboard'){if(CLOUD)showLogin();else openConnect();return}document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===page));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===page));if(page==='details')renderDetails();if(page==='history')renderHistory();if(page==='master')renderMaster();window.scrollTo(0,0)}
-  function dashboardRecords(){return state.token?activeRecords():state.publicRecords}
+  function setPage(page){if(!state.token&&page!=='dashboard'){if(CLOUD)showLogin();else openConnect();return}if(state.token&&!state.dataReady&&page!=='dashboard')return;document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===page));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===page));if(page==='details')renderDetails();if(page==='history')renderHistory();if(page==='master')renderMaster();window.scrollTo(0,0)}
+  function dashboardRecords(){return state.token&&state.dataReady?activeRecords():state.publicRecords}
   function dashboardFacilities(){const selected=$('fFacility')?.value||'';return state.facilities.filter(x=>x.active&&(!selected||x.code===selected)).sort((a,b)=>a.code.localeCompare(b.code))}
   function controls(){const rows=dashboardRecords();const fy=[...new Set(rows.map(r=>r.fiscalYear))].sort((a,b)=>b-a);if(!fy.length)fy.push(new Date().getFullYear()+543+(new Date().getMonth()>=9?1:0));const periods=[...new Set(rows.map(r=>r.period))].sort().reverse();const facilities=state.facilities.filter(x=>x.active).sort((a,b)=>a.code.localeCompare(b.code));const types=state.types.filter(x=>x.active);const typeOpts=[['','ทั้งหมด'],['H-SUB','H-SUB (ยอดพึงรับรวม)'],...FUND.map(x=>[x[0],x[2]]),['OTHER','อื่น ๆ / ไม่ระบุ']];
     for(const prefix of ['f','d']){const year=$(prefix+'Year').value,period=$(prefix+'Period').value,fac=$(prefix+'Facility').value,type=$(prefix+'Type').value;selectOptions($(prefix+'Year'),[['','ทุกปี'],...fy.map(x=>[x,String(x)])],year);selectOptions($(prefix+'Period'),[['','ทุกรอบ'],...periods.map(x=>[x,x])],period);selectOptions($(prefix+'Facility'),[['','ทุกหน่วย'],...facilities.map(x=>[x.code,x.code+' '+x.name])],fac);selectOptions($(prefix+'Type'),typeOpts,type)}
@@ -205,7 +208,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   }
   function renderDashboard(){
     controls();
-    const rows=filtered('f'),type=$('fType').value,guest=!state.token;
+    if(state.token&&!state.dataReady&&!state.publicMeta){
+      $('heroTotal').textContent='กำลังโหลด…';$('updatedLabel').textContent='กำลังโหลดข้อมูลรายรายการ';$('kpis').innerHTML='';$('stackedLegend').innerHTML='';$('stackedChart').innerHTML='<div class="chart-empty">กำลังโหลดข้อมูล</div>';
+      for(const id of ['monthlyChart','fundChart','ranking','exceptions'])$(id).innerHTML='<div class="empty">กำลังโหลดข้อมูล</div>';
+      $('publicStatus').textContent='เข้าสู่ระบบแล้ว กำลังโหลดข้อมูลรายรายการ';return;
+    }
+    const rows=filtered('f'),type=$('fType').value,guest=!state.token,preview=!state.dataReady;
     const accrued=rows.reduce((sum,row)=>sum+valueFor(row,type),0);
     const claim=rows.reduce((sum,row)=>sum+(Number(row.claimAmount)||0),0);
     const count=rows.reduce((sum,row)=>sum+(Number(row.recordCount)||1),0);
@@ -234,10 +242,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     const known=new Map(grouped.map(x=>[x.key,x]));
     const ranked=visibleFacilities.map(f=>known.get(f.code)||{key:f.code,count:0,value:0,missing:true}).concat(grouped.filter(x=>!visibleFacilities.some(f=>f.code===x.key))).sort((a,b)=>b.value-a.value||a.key.localeCompare(b.key));
     $('ranking').innerHTML=ranked.length?`<div class="tablewrap"><table><thead><tr><th>หน่วยบริการ</th><th class="num">รายการ</th><th class="num">ยอดพึงรับ</th></tr></thead><tbody>${ranked.map(x=>`<tr><td>${esc(x.key)} ${esc(state.facilities.find(f=>f.code===x.key)?.name||'')}${x.missing?' <span class="badge amber">ยังไม่มีข้อมูล</span>':''}</td><td class="num">${intfmt.format(x.count)}</td><td class="num">${money(x.value)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">ยังไม่มีข้อมูล</div>';
-    if(guest){
-      $('exceptions').innerHTML='<div class="empty">เข้าสู่ระบบเพื่อดูรายการที่ควรตรวจและข้อมูลรายรายการ</div>';
-      $('updatedLabel').textContent=state.publicMeta?.generatedAt?'อัปเดต '+state.publicMeta.generatedAt:'รอข้อมูลจากชีต';
-      $('publicStatus').textContent=state.publicError||'แสดงข้อมูลสรุปยอดเงินเท่านั้น เข้าสู่ระบบเพื่อดูรายละเอียดและบันทึกข้อมูล';
+    if(preview){
+      $('exceptions').innerHTML='<div class="empty">'+(guest?'เข้าสู่ระบบเพื่อดูรายการที่ควรตรวจและข้อมูลรายรายการ':'กำลังโหลดข้อมูลรายรายการ')+'</div>';
+      $('updatedLabel').textContent=guest?(state.publicMeta?.generatedAt?'อัปเดต '+state.publicMeta.generatedAt:'รอข้อมูลจากชีต'):'ข้อมูลสรุประหว่างโหลดรายการ';
+      $('publicStatus').textContent=guest?(state.publicError||'แสดงข้อมูลสรุปยอดเงินเท่านั้น เข้าสู่ระบบเพื่อดูรายละเอียดและบันทึกข้อมูล'):'เข้าสู่ระบบแล้ว กำลังโหลดข้อมูลรายรายการ';
     }else{
       const issues=[['รหัสหน่วยบริการไม่อยู่ในทะเบียน',rows.filter(row=>!state.facilities.some(f=>f.code===row.facilityCode)).length],['ยอดพึงรับติดลบ',rows.filter(row=>row.accruedAmount<0).length],['ข้อมูลไม่สมบูรณ์',rows.filter(row=>row.status==='ไม่สมบูรณ์').length],['ยอดพึงรับมากกว่ายอดเรียกเก็บ',rows.filter(row=>row.accruedAmount>row.claimAmount+0.01).length]];
       $('exceptions').innerHTML=`<div class="tablewrap"><table><thead><tr><th>เงื่อนไข</th><th class="num">รายการ</th></tr></thead><tbody>${issues.map(x=>`<tr><td>${x[0]}</td><td class="num">${intfmt.format(x[1])}</td></tr>`).join('')}</tbody></table></div><p class="muted small">เงื่อนไขเป็นรายการให้ตรวจสอบ ไม่ได้หมายความว่าข้อมูลผิดเสมอไป</p>`;
@@ -407,19 +415,24 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     }finally{state.busy=false;$('commitBtn').disabled=true}
   }
   async function refreshCloud(){
+    const token=state.token,run=++state.loadRun;
+    const current=()=>{if(state.token!==token||state.loadRun!==run)throw new Error('การโหลดข้อมูลถูกยกเลิก')};
     const data=await gas('getBootstrap');
+    current();
     checkSheetId(data.spreadsheetId);
     state.user=data.user;state.facilities=data.facilities;state.types=data.types;state.batches=data.batches;state.records=[];
     const cached=readCloudCache(data);
     if(cached)$('modeBadge').textContent='Google Sheets · ใช้ข้อมูลเดิม';
     if(!cached){
       if(data.recordMode==='SCOPED'){
-        $('loginStatus').textContent='กำลังโหลดข้อมูลของหน่วยบริการ '+data.user.facilityCode+'…';
+        if(!state.dataReady)dataLoadStatus('เข้าสู่ระบบแล้ว · กำลังโหลดข้อมูลของหน่วยบริการ '+data.user.facilityCode+'…');
         const scoped=await gas('getScopedRecords');
+        current();
         state.records=Array.isArray(scoped.rows)?scoped.rows:[];
       }else for(let offset=0;offset<data.totalPhysicalRows;){
-        if(!$('loginGate').classList.contains('hidden'))$('loginStatus').textContent='กำลังโหลดข้อมูล '+intfmt.format(offset)+' / '+intfmt.format(data.totalPhysicalRows)+' รายการ';
+        if(!state.dataReady)dataLoadStatus('เข้าสู่ระบบแล้ว · กำลังโหลดข้อมูล '+intfmt.format(offset)+' / '+intfmt.format(data.totalPhysicalRows)+' รายการ');
         const page=await gas('getRecordChunk',offset,data.chunk);
+        current();
         if(page.nextOffset<=offset)throw new Error('GAS ส่งหน้าข้อมูลซ้ำ กรุณาอัปเดต Code.gs');
         state.records.push(...page.rows);offset=page.nextOffset;
         $('modeBadge').textContent='Google Sheets · '+intfmt.format(offset)+' / '+intfmt.format(data.totalPhysicalRows);
@@ -430,14 +443,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     if(new Set(active.map(row=>row.id)).size!==active.length)throw new Error('GAS ส่งรหัสรายการซ้ำ กรุณาอัปเดต Code.gs และโหลดใหม่');
     const batches=state.batches.filter(batch=>batch.status==='ACTIVE');
     checkTotals(active,batches.reduce((sum,batch)=>sum+(Number(batch.count)||0),0),Math.round(batches.reduce((sum,batch)=>sum+(Number(batch.accruedTotal)||0),0)*100)/100);
-    if(state.user.role==='ADMIN')state.accounts=await gas('getAccounts');
+    if(state.user.role==='ADMIN'){const accounts=await gas('getAccounts');current();state.accounts=accounts}
     state.payables=null;state.payablesError='กำลังโหลดรายการค้างจ่าย…';
-    document.body.classList.remove('guest');$('loginGate').classList.add('hidden');$('loginBtn').classList.add('hidden');$('modeBadge').textContent='Google Sheets';$('userBadge').textContent=state.user.email+' · '+state.user.role;$('logoutBtn').classList.remove('hidden');$('changePasswordBtn').classList.remove('hidden');renderAll();renderPayables();
+    state.dataReady=true;document.body.classList.remove('guest','data-pending');dataLoadStatus();$('loginGate').classList.add('hidden');$('loginBtn').classList.add('hidden');$('modeBadge').textContent='Google Sheets';$('userBadge').textContent=state.user.email+' · '+state.user.role;$('logoutBtn').classList.remove('hidden');$('changePasswordBtn').classList.remove('hidden');renderAll();renderPayables();
     const signedInToken=state.token;
     gas('getTargetPayables').then(data=>{if(state.token!==signedInToken)return;state.payables=data;state.payablesError='';renderPayables()}).catch(err=>{if(state.token!==signedInToken)return;state.payables=null;state.payablesError=err.message||String(err);renderPayables();notify('เข้าสู่ระบบแล้ว แต่โหลดรายการค้างจ่ายไม่ได้: '+state.payablesError,'error')});
   }
   function renderPayables(){
-    if(!state.payables){$('payMigration').classList.remove('hidden');$('payMigration').textContent=state.payablesError?'โหลดรายการค้างจ่ายไม่ได้: '+state.payablesError:'ยังไม่มีข้อมูลรายการค้างจ่าย';$('payList').innerHTML='';$('autoHsubBtn').disabled=true;$('savePayablesBtn').disabled=true;return}
+    if(!state.payables){$('payMigration').classList.remove('hidden');$('payMigration').textContent=state.payablesError?'โหลดรายการค้างจ่ายไม่ได้: '+state.payablesError:'ยังไม่มีข้อมูลรายการค้างจ่าย';$('payList').innerHTML='';$('autoHsubBtn').disabled=true;return}
     const rows=state.payables.rows;
     selectOptions($('payFacility'),rows.map(r=>[r.code,r.code+' '+r.name]),$('payFacility').value);
     const row=rows.find(r=>r.code===$('payFacility').value);
@@ -448,7 +461,6 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     $('payMigration').classList.toggle('hidden',ready);
     $('payMigration').textContent=ready?'':(legacy?'ชีตนี้ยังมี 38 รายการเดิม กรุณารัน setup() เพื่อเพิ่มช่อง H-sub ก่อนเติมหรือบันทึกยอด':'โครงสร้างชีตไม่ครบ กรุณาอัปเดต Code.gs และรัน setup()');
     $('autoHsubBtn').disabled=!ready;
-    $('savePayablesBtn').disabled=!ready;
     $('targetLink').href=state.payables.spreadsheetUrl||'#';
     $('targetLink').classList.toggle('hidden',!CLOUD);
     $('loadPayablesBtn').classList.toggle('hidden',!CLOUD);
@@ -503,7 +515,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       const target=state.payables.headings.reduce((sum,_,i)=>sum+Math.round(number($('pay_'+i).value)*100),0);
       const warning=categorized!==imported?'ยอดจาก 7 หมวดต่างจากยอดพึงรับ '+money((imported-categorized)/100)+' บาท กรุณาตรวจหมวดเงิน':(target!==imported?'ช่องรายการอื่นยังมียอด ทำให้รวมต่างจากไฟล์นำเข้า '+money((target-imported)/100)+' บาท กรุณาตรวจสอบ':'');
       $('payStatus').textContent='เตรียมยอด H-sub จากไฟล์ที่ใช้งาน '+money(imported/100)+' บาท'+(warning?' · '+warning:' · ยังไม่บันทึกลงชีต');
-      if(!silent)notify(warning||'เติมยอดลงรายการเดิมและ H-sub ครบแล้ว กรุณาตรวจและกดบันทึก',warning?'error':'good');
+      if(!silent)notify(warning||'เติมยอดลงรายการเดิมและ H-sub ครบแล้ว ตรวจสอบยอดได้จากหน้าจอ โดยไม่มีการบันทึกลงชีต',warning?'error':'good');
       return {ready:categorized===imported&&target===imported,values:sums,imported,total:categorized,warning};
     }catch(e){if(!silent)notify(e.message,'error');return {ready:false,error:e.message}}
   }
@@ -534,43 +546,31 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       if(values.some(v=>!Number.isFinite(v)))throw new Error('ยอดเงินค้างจ่ายในไฟล์ไม่ถูกต้อง');
       normalizedPayableValues(values).forEach((v,i)=>$('pay_'+i).value=v||'');
       updatePaySummary();
-      $('payStatus').textContent='อ่าน '+file.name+' / '+found.sheet+' แล้ว กรุณาตรวจยอดและกดบันทึก';
-      notify('อ่านยอดจากไฟล์แล้ว และรวม HC/AE ลงช่องเดิม กรุณาตรวจสอบก่อนบันทึก','good')
+      $('payStatus').textContent='อ่าน '+file.name+' / '+found.sheet+' แล้ว ตรวจสอบยอดได้จากหน้าจอ โดยไม่มีการบันทึกลงชีต';
+      notify('อ่านยอดจากไฟล์แล้ว และรวม HC/AE ลงช่องเดิม เฉพาะการแสดงผลในหน้านี้','good')
     }catch(e){notify(e.message,'error')}
-  }
-  async function savePayables(options={}){
-    const silent=!!options.silent;
-    try{
-      if(state.payables?.headings.length!==45)throw new Error('โครงสร้างชีตไม่ครบ กรุณาอัปเดต Code.gs ก่อนบันทึก');
-      const row=state.payables.rows.find(r=>r.code===$('payFacility').value);if(!row)throw new Error('เลือกหน่วยบริการก่อน');
-      const values=state.payables.headings.map((_,i)=>number($('pay_'+i).value||0));
-      if(values.some(v=>!Number.isFinite(v)))throw new Error('ยอดเงินต้องเป็นตัวเลข');
-      if([...HIDDEN_HSUB].some(i=>Math.round(values[i]*100)!==0))throw new Error('ช่อง H-sub HC/AE ที่เลิกใช้ต้องเป็นศูนย์ กรุณาเติมยอดจากกองทุนใหม่');
-      const total=Math.round(values.reduce((s,v)=>s+v,0)*100)/100;
-      const imported=accruedCents(activeRecords().filter(r=>r.facilityCode===row.code))/100;
-      if(imported>0&&total+0.01<imported)throw new Error('ยอดรวม 41 ช่องต่ำกว่ายอดพึงรับจากไฟล์นำเข้าที่ใช้งานทั้งหมด '+money(imported)+' บาท จึงยังบันทึกไม่ได้');
-      const run=async()=>{try{$('savePayablesBtn').disabled=true;if(CLOUD){await gas('saveTargetPayables',row.code,values,row.version);state.payables=await gas('getTargetPayables')}else{row.values=values;persist()}$('payStatus').textContent='บันทึกสำเร็จ '+money(total)+' บาท';if(!silent)notify('บันทึกรายการค้างจ่ายแล้ว','good')}catch(e){if(!silent)notify(e.message,'error');throw e}finally{$('savePayablesBtn').disabled=false}};
-      if(!silent&&Math.abs(total-imported)>0.01)confirmAction('ยืนยันยอดต่างจากรายงานนำเข้า','ยอด 41 หัวข้อ '+money(total)+' บาท ต่างจากยอดพึงรับที่นำเข้า '+money(imported)+' บาท กรุณาตรวจสอบความหมายของยอดก่อนบันทึก',run);else await run();
-    }catch(e){if(!silent){notify(e.message,'error');return false}throw e}
   }
   async function issuePasswords(){try{$('issuePasswordsBtn').disabled=true;const result=await gas('issueFacilityPasswords');state.credentials=result.created;state.accounts=await gas('getAccounts');renderMaster();$('downloadPasswordsBtn').classList.remove('hidden');notify('ตั้ง User/Password ตามรหัสสถานบริการครบ '+result.created.length+' แห่งแล้ว','good')}catch(e){notify(e.message,'error')}finally{$('issuePasswordsBtn').disabled=false}}
   function downloadPasswords(){if(!state.credentials.length)return;const lines=['User\tPassword\tหน่วยบริการ',...state.credentials.map(x=>[x.code,x.password,x.name].join('\t'))].join('\r\n');download('User_Password_24แห่ง.txt','text/plain;charset=utf-8','\ufeff'+lines);state.credentials=[];$('downloadPasswordsBtn').classList.add('hidden')}
   async function resetFacilityPassword(code){try{const x=await gas('resetFacilityPassword',code);state.credentials=[{code:x.code,name:state.facilities.find(f=>f.code===x.code)?.name||'',password:x.password}];$('downloadPasswordsBtn').classList.remove('hidden');notify('รีเซ็ตรหัส '+code+' แล้ว กรุณาดาวน์โหลดรหัสใหม่','good')}catch(e){notify(e.message,'error')}}
   async function enterGuest(message=''){
+    state.loadRun++;state.dataReady=false;document.body.classList.remove('data-pending');dataLoadStatus();
     state.token='';sessionStorage.removeItem('hs_session');state.user={email:'',role:'GUEST'};state.records=[];state.batches=[];state.accounts=[];state.payables=null;state.payablesError='';state.hsubAutoSaveKey='';state.publicRecords=[];state.publicMeta=null;state.publicError='';
     state.facilities=LOCAL_ROSTER.map(x=>({...x,active:true}));state.types=DEFAULT_TYPES.map(x=>({...x}));
     document.body.classList.add('guest');$('loginGate').classList.add('hidden');$('passwordGate').classList.add('hidden');$('loginBtn').classList.remove('hidden');$('logoutBtn').classList.add('hidden');$('changePasswordBtn').classList.add('hidden');$('userBadge').textContent='';
     if(CLOUD){
-      try{const summary=await gas('getPublicDashboard');checkSheetId(summary.spreadsheetId);checkTotals(summary.records||[],summary.expectedCount,summary.expectedAccrued);state.publicRecords=summary.records||[];state.facilities=summary.facilities||state.facilities;state.publicMeta=summary;$('modeBadge').textContent='ข้อมูลสรุปจากชีต'}
-      catch(err){state.publicError='โหลด Dashboard ไม่สำเร็จ: '+err.message+' · ตรวจว่า Deploy GAS เป็นเวอร์ชันล่าสุด';$('modeBadge').textContent='เชื่อมต่อไม่สำเร็จ'}
+      try{const summary=await gas('getPublicDashboard');if(state.token)return;checkSheetId(summary.spreadsheetId);checkTotals(summary.records||[],summary.expectedCount,summary.expectedAccrued);state.publicRecords=summary.records||[];state.facilities=summary.facilities||state.facilities;state.publicMeta=summary;$('modeBadge').textContent='ข้อมูลสรุปจากชีต'}
+      catch(err){if(state.token)return;state.publicError='โหลด Dashboard ไม่สำเร็จ: '+err.message+' · ตรวจว่า Deploy GAS เป็นเวอร์ชันล่าสุด';$('modeBadge').textContent='เชื่อมต่อไม่สำเร็จ'}
     }else{state.publicError='เชื่อมต่อ GAS Web App เพื่อแสดงยอดจาก Google Sheet';$('modeBadge').textContent='ยังไม่เชื่อมต่อ'}
     if(message)state.publicError=message;
     renderDashboard();setPage('dashboard');
   }
   function showLogin(message=''){state.token='';sessionStorage.removeItem('hs_session');$('loginGate').classList.remove('hidden');$('passwordGate').classList.add('hidden');$('loginMessage').textContent=message;$('loginMessage').classList.toggle('hidden',!message);$('loginUser').focus()}
-  async function submitLogin(e){e.preventDefault();if($('loginSubmitBtn').disabled)return;$('loginSubmitBtn').disabled=true;$('loginStatus').textContent='กำลังตรวจสอบบัญชี…';$('loginStatus').classList.remove('hidden');$('loginMessage').classList.add('hidden');let authenticated=false;try{const result=await gas('login',$('loginUser').value.trim(),$('loginPassword').value);authenticated=true;state.token=result.token;sessionStorage.setItem('hs_session',state.token);$('loginStatus').textContent='รหัสผ่านถูกต้อง กำลังโหลดข้อมูล…';await refreshCloud();$('loginPassword').value=''}catch(err){state.token='';sessionStorage.removeItem('hs_session');showLogin((authenticated?'รหัสผ่านถูกต้อง แต่โหลดข้อมูลไม่สำเร็จ: ':'')+(err.message||String(err)))}finally{$('loginSubmitBtn').disabled=false;$('loginStatus').classList.add('hidden')}}
+  function authenticated(user){state.user=user;state.dataReady=false;state.records=[];state.batches=[];state.accounts=[];state.payables=null;state.payablesError='';document.body.classList.remove('guest');document.body.classList.add('data-pending');$('loginGate').classList.add('hidden');$('loginBtn').classList.add('hidden');$('userBadge').textContent=user.email+' · '+user.role;$('logoutBtn').classList.remove('hidden');$('changePasswordBtn').classList.remove('hidden');$('loginPassword').value='';dataLoadStatus('เข้าสู่ระบบแล้ว · กำลังโหลดข้อมูล…');renderDashboard();setPage('dashboard');loadAuthenticatedData()}
+  function loadAuthenticatedData(){const token=state.token;dataLoadStatus('เข้าสู่ระบบแล้ว · กำลังโหลดข้อมูล…');refreshCloud().catch(err=>{if(state.token!==token)return;state.dataReady=false;document.body.classList.add('data-pending');dataLoadStatus('เข้าสู่ระบบสำเร็จ แต่โหลดข้อมูลไม่สำเร็จ: '+(err.message||String(err)),true)})}
+  async function submitLogin(e){e.preventDefault();if($('loginSubmitBtn').disabled)return;$('loginSubmitBtn').disabled=true;$('loginStatus').textContent='กำลังตรวจสอบบัญชี…';$('loginStatus').classList.remove('hidden');$('loginMessage').classList.add('hidden');try{const result=await gas('login',$('loginUser').value.trim(),$('loginPassword').value);state.token=result.token;sessionStorage.setItem('hs_session',state.token);authenticated(result.user||await gas('whoAmI'))}catch(err){state.token='';sessionStorage.removeItem('hs_session');showLogin(err.message||String(err))}finally{$('loginSubmitBtn').disabled=false;$('loginStatus').classList.add('hidden')}}
   async function submitPassword(e){e.preventDefault();try{await gas('changePassword',$('oldPassword').value,$('newPassword').value);$('oldPassword').value='';$('newPassword').value='';await enterGuest();showLogin('เปลี่ยนรหัสผ่านแล้ว กรุณาเข้าสู่ระบบใหม่')}catch(err){$('passwordMessage').textContent=err.message;$('passwordMessage').classList.remove('hidden')}}
-  async function logout(){if(CLOUD&&state.token){try{await gas('logout')}catch(_){}}await enterGuest()}
+  async function logout(){const pending=CLOUD&&state.token?gas('logout').catch(()=>{}):Promise.resolve();await enterGuest();await pending}
   async function saveFacility(){try{const item={code:$('facilityCode').value.trim(),name:$('facilityName').value.trim(),active:$('facilityActive').checked};if(!/^[A-Za-z0-9_-]{1,20}$/.test(item.code)||!item.name)throw new Error('กรุณาระบุรหัสและชื่อหน่วยบริการให้ถูกต้อง');if(CLOUD){await gas('saveFacility',item);await refreshCloud()}else{const at=state.facilities.findIndex(x=>x.code===item.code);if(at>=0)state.facilities[at]=item;else state.facilities.push(item);logLocal('SAVE_FACILITY',item.code,item.name);renderAll()}notify('บันทึกหน่วยบริการแล้ว','good')}catch(e){notify(e.message,'error')}}
   async function saveType(){try{const item={code:$('typeCode').value.trim(),name:$('typeName').value.trim(),aliases:$('typeAliases').value.trim(),active:$('typeActive').checked};if(!/^[A-Za-z0-9_-]{1,30}$/.test(item.code)||!item.name)throw new Error('กรุณาระบุรหัสและชื่อประเภทผลงานให้ถูกต้อง');if(CLOUD){await gas('saveType',item);await refreshCloud()}else{const at=state.types.findIndex(x=>x.code===item.code);if(at>=0)state.types[at]=item;else state.types.push(item);logLocal('SAVE_TYPE',item.code,item.name);renderAll()}notify('บันทึกประเภทผลงานแล้ว','good')}catch(e){notify(e.message,'error')}}
   function confirmAction(title,message,yes){$('modalTitle').textContent=title;$('modalText').textContent=message;$('confirmModal').classList.add('open');$('modalNo').onclick=()=>$('confirmModal').classList.remove('open');$('modalYes').onclick=async()=>{$('confirmModal').classList.remove('open');await yes()}}
@@ -588,18 +588,19 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     $('excelFile').addEventListener('change',selectFile);$('batchFileSelect').addEventListener('change',previewSelectedFile);$('sheetSelect').addEventListener('change',selectSheet);$('validateBtn').addEventListener('click',validateFile);$('commitBtn').addEventListener('click',commitImport);
     $('saveFacilityBtn').addEventListener('click',saveFacility);$('saveTypeBtn').addEventListener('click',saveType);$('csvBtn').addEventListener('click',csv);
     $('backupBtn').addEventListener('click',backup);$('restoreFile').addEventListener('change',restore);
-    $('payFacility').addEventListener('change',renderPayables);$('payList').addEventListener('input',updatePaySummary);$('payableFile').addEventListener('change',importPayableFile);$('autoHsubBtn').addEventListener('click',fillHsubFunds);$('savePayablesBtn').addEventListener('click',savePayables);
+    $('payFacility').addEventListener('change',renderPayables);$('payList').addEventListener('input',updatePaySummary);$('payableFile').addEventListener('change',importPayableFile);$('autoHsubBtn').addEventListener('click',fillHsubFunds);
      $('loadPayablesBtn').addEventListener('click',async()=>{try{state.hsubAutoSaveKey='';state.payables=await gas('getTargetPayables');renderPayables()}catch(e){notify(e.message,'error')}});
     $('issuePasswordsBtn').addEventListener('click',()=>confirmAction('ตั้งรหัส 24 แห่ง','รหัสผ่านของทั้ง 24 บัญชีจะถูกตั้งเป็นรหัสสถานบริการ ผู้ที่เคยเปลี่ยนรหัสแล้วจะต้องใช้รหัสสถานบริการในการเข้าสู่ระบบครั้งถัดไป',issuePasswords));$('downloadPasswordsBtn').addEventListener('click',downloadPasswords);
     $('accountsTable').addEventListener('click',e=>{const b=e.target.closest('[data-reset-fac]');if(b)confirmAction('Reset password',b.dataset.resetFac,()=>resetFacilityPassword(b.dataset.resetFac))});
     $('loginForm').addEventListener('submit',submitLogin);$('passwordForm').addEventListener('submit',submitPassword);
+    $('retryDataBtn').addEventListener('click',()=>{if(state.token)loadAuthenticatedData()});
     $('cancelPasswordBtn').addEventListener('click',logout);$('changePasswordBtn').addEventListener('click',()=>$('passwordGate').classList.remove('hidden'));
     $('logoutBtn').addEventListener('click',logout);
     $('historyTable').addEventListener('click',e=>{const b=e.target.closest('[data-cancel]');if(b)confirmAction('Cancel import',b.dataset.cancel.slice(0,8),()=>cancelBatch(b.dataset.cancel))});
     $('facilitiesTable').addEventListener('click',e=>{const b=e.target.closest('[data-edit-fac]');if(!b)return;const f=state.facilities.find(x=>x.code===b.dataset.editFac);$('facilityCode').value=f.code;$('facilityName').value=f.name;$('facilityActive').checked=f.active});
     $('typesTable').addEventListener('click',e=>{const b=e.target.closest('[data-edit-type]');if(!b)return;const t=state.types.find(x=>x.code===b.dataset.editType);$('typeCode').value=t.code;$('typeName').value=t.name;$('typeAliases').value=t.aliases;$('typeActive').checked=t.active});
   }
-  async function init(){events();if(INSIDE_GAS)$('connectBtn').classList.add('hidden');state.token=sessionStorage.getItem('hs_session')||'';if(state.token){try{await gas('whoAmI');await refreshCloud();return}catch(e){await enterGuest('เซสชันหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง');return}}await enterGuest()}
+  async function init(){events();if(INSIDE_GAS)$('connectBtn').classList.add('hidden');state.token=sessionStorage.getItem('hs_session')||'';if(state.token){const token=state.token;try{const user=await gas('whoAmI');if(state.token===token)authenticated(user);return}catch(e){if(state.token===token)await enterGuest('เซสชันหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง');return}}await enterGuest()}
   function invalidatePrepared(){state.prepared=null;$('commitBtn').disabled=true;$('validationResult').textContent='ข้อมูลนำเข้าเปลี่ยนแล้ว กรุณาตรวจสอบใหม่'}
   document.addEventListener('DOMContentLoaded',()=>{init();['importYear','importPeriod','replaceBatch'].forEach(x=>$(x).addEventListener('input',invalidatePrepared));$('mappingArea').addEventListener('change',invalidatePrepared)});
   </script>
